@@ -4,8 +4,6 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.*;
 import io.micronaut.http.client.annotation.Client;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import rabraham.recipes.model.GetRecipeDTO;
 import rabraham.recipes.model.RecipeDTO;
 
@@ -24,14 +22,14 @@ interface RecipeClient {
     );
 
     @Get("/{id}")
-    GetRecipeDTO get(@NotNull @PathVariable String id);
+    GetRecipeDTO get(@PathVariable String id);
 
     @Put("/{id}")
-    GetRecipeDTO update(@NotNull String id, @NotNull @Valid RecipeDTO recipe);
+    GetRecipeDTO update(@PathVariable String id, @Body RecipeDTO recipe);
 
     @Post
-    HttpResponse<GetRecipeDTO> create(@NotNull @Valid RecipeDTO recipe);
+    HttpResponse<GetRecipeDTO> create(@Body RecipeDTO recipe);
 
     @Delete("/{id}")
-    HttpResponse<Void> delete(@NotNull @PathVariable String id);
+    HttpResponse<Void> delete(@PathVariable String id);
 }

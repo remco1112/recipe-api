@@ -57,8 +57,8 @@ public class RecipeController implements RecipeApi {
     private Recipe toRecipe(RecipeDTO recipeDTO) {
         final Recipe recipe = new Recipe();
         recipe.setTitle(recipeDTO.getTitle());
-        recipe.setInstructions(recipe.getInstructions());
-        recipe.setServings(recipe.getServings());
+        recipe.setInstructions(recipeDTO.getInstructions());
+        recipe.setServings(recipeDTO.getServings());
         recipe.setVegetarian(recipeDTO.getVegetarian());
         recipe.setIngredients(recipeDTO.getIngredients().stream().map(this::toIngredient).toList());
         return recipe;
