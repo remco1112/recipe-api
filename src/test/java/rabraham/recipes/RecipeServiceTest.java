@@ -1,9 +1,11 @@
 package rabraham.recipes;
 
+import io.micronaut.data.repository.jpa.criteria.PredicateSpecification;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -122,6 +124,21 @@ public class RecipeServiceTest {
 
         StepVerifier.create(actual)
                 .expectErrorSatisfies(this::assertRecipeDoesNotExistError);
+    }
+
+    @Test
+    void listRecipesListsRecipes() {
+        final PredicateSpecification<Recipe> mockPredicateSpecification = (PredicateSpecification<Recipe>) mock(PredicateSpecification.class);
+        final Flux<Recipe> expected = (Flux<Recipe>) mock(Flux.class);
+        when(recipeRepository.findAll(mockPredicateSpecification))
+                .thenReturn(expected);
+
+        final RecipeCriteria mockCriteria = mock(RecipeCriteria.class);
+        when(mockCriteria.matches()).thenReturn(mockPredicateSpecification);
+
+        final Flux<Recipe> actual = recipeService.listRecipes(mockCriteria);
+
+        assertSame(expected, actual);
     }
 
     private void assertRecipeDoesNotExistError(Throwable error) {
