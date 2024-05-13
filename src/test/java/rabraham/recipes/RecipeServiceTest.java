@@ -56,8 +56,7 @@ public class RecipeServiceTest {
 
         StepVerifier.create(actual)
                 .expectNext(RECIPE_ID)
-                .expectComplete()
-                .verify();
+                .verifyComplete();
     }
 
     @Test
@@ -68,10 +67,38 @@ public class RecipeServiceTest {
         final Mono<String> actual = recipeService.deleteRecipe(RECIPE_ID);
 
         StepVerifier.create(actual)
-                .expectErrorSatisfies(error -> {
-                    assertInstanceOf(RecipeDoesNotExistException.class, error);
-                    assertEquals(RECIPE_ID, ((RecipeDoesNotExistException) error).getRecipeId());
-                }).verify();
+                .expectErrorSatisfies(this::assertRecipeDoesNotExistError)
+                .verify();
+    }
+
+    @Test
+    void getRecipeReturnsRecipe() {
+        final Recipe recipe = mock(Recipe.class);
+        when(recipeRepository.findById(RECIPE_ID))
+                .thenReturn(Mono.just(recipe));
+
+        final Mono<Recipe> actual = recipeService.getRecipe(RECIPE_ID);
+
+        StepVerifier.create(actual)
+                .expectNext(recipe)
+                .verifyComplete();
+    }
+
+    @Test
+    void getRecipeThrowsWhenRecipeDoesNotExist() {
+        when(recipeRepository.findById(RECIPE_ID))
+                .thenReturn(Mono.empty());
+
+        final Mono<Recipe> actual = recipeService.getRecipe(RECIPE_ID);
+
+        StepVerifier.create(actual)
+                .expectErrorSatisfies(this::assertRecipeDoesNotExistError)
+                .verify();
+    }
+
+    private void assertRecipeDoesNotExistError(Throwable error) {
+        assertInstanceOf(RecipeDoesNotExistException.class, error);
+        assertEquals(RECIPE_ID, ((RecipeDoesNotExistException) error).getRecipeId());
     }
 
     @MockBean(RecipeRepository.class)
