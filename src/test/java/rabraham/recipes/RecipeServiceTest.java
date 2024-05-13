@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 @MicronautTest
 public class RecipeServiceTest {
+    private static final String RECIPE_ID = "recipe id";
 
     @Inject
     private RecipeRepository recipeRepository;
@@ -35,7 +36,7 @@ public class RecipeServiceTest {
     @Test
     void createRecipeThrowsWhenRecipeHasId() {
         final Recipe recipe = mock(Recipe.class);
-        when(recipe.getId()).thenReturn("recipe id");
+        when(recipe.getId()).thenReturn(RECIPE_ID);
 
         final Mono<Recipe> actual = recipeService.createRecipe(recipe);
 
@@ -43,6 +44,33 @@ public class RecipeServiceTest {
                 .expectErrorSatisfies(error -> {
                     assertInstanceOf(IllegalArgumentException.class, error);
                     assertEquals("Cannot create recipe with id", error.getMessage());
+                }).verify();
+    }
+
+    @Test
+    void deleteRecipeDeletesRecipeAndReturnsRecipeId() {
+        when(recipeRepository.deleteById(RECIPE_ID))
+                .thenReturn(Mono.just(1L));
+
+        final Mono<String> actual = recipeService.deleteRecipe(RECIPE_ID);
+
+        StepVerifier.create(actual)
+                .expectNext(RECIPE_ID)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    void deleteRecipeThrowsWhenRecipeDoesNotExist() {
+        when(recipeRepository.deleteById(RECIPE_ID))
+                .thenReturn(Mono.just(0L));
+
+        final Mono<String> actual = recipeService.deleteRecipe(RECIPE_ID);
+
+        StepVerifier.create(actual)
+                .expectErrorSatisfies(error -> {
+                    assertInstanceOf(RecipeDoesNotExistException.class, error);
+                    assertEquals(RECIPE_ID, ((RecipeDoesNotExistException) error).getRecipeId());
                 }).verify();
     }
 
