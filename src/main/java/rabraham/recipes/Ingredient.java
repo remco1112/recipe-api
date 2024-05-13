@@ -1,8 +1,8 @@
 package rabraham.recipes;
 
-import io.micronaut.serde.annotation.Serdeable;
+import jakarta.persistence.Embeddable;
 
-@Serdeable
+@Embeddable
 public class Ingredient {
 
     private String name;

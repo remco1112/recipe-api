@@ -17,8 +17,8 @@ interface RecipeClient {
             @QueryValue @Nullable Boolean vegetarian,
             @QueryValue @Nullable Integer servings,
             @QueryValue @Nullable String search,
-            @QueryValue @Nullable List<String> includeIngredients,
-            @QueryValue @Nullable List<String> excludeIngredients
+            @QueryValue @Nullable List<String> includeIngredient,
+            @QueryValue @Nullable List<String> excludeIngredient
     );
 
     @Get("/{id}")

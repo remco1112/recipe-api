@@ -3,7 +3,8 @@ package rabraham.recipes;
 import io.micronaut.data.annotation.GeneratedValue;
 import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
-import io.micronaut.serde.annotation.Serdeable;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.FetchType;
 
 import java.util.List;
 
@@ -19,8 +20,9 @@ public class Recipe {
     private String title;
     private String instructions;
     private int servings;
-    private List<Ingredient> ingredients;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<Ingredient> ingredients;
 
     public String getId() {
         return id;

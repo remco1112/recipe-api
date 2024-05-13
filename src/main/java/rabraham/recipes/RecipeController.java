@@ -41,7 +41,7 @@ public class RecipeController implements RecipeApi {
 
     @Override
     public Mono<@NotNull List<@Valid GetRecipeDTO>> list(Boolean vegetarian, Integer servings, String search, List<@NotNull String> includeIngredient, List<@NotNull String> excludeIngredient) {
-        return recipeService.listRecipes() // TODO query params
+        return recipeService.listRecipes(new RecipeCriteria(vegetarian, servings, search, includeIngredient, excludeIngredient))
                 .map(this::toGetDto)
                 .collect(Collectors.toList());
     }

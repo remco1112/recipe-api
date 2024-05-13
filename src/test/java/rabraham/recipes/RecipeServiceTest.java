@@ -35,8 +35,7 @@ public class RecipeServiceTest {
 
     @Test
     void createRecipeThrowsWhenRecipeHasId() {
-        final Recipe recipe = mock(Recipe.class);
-        when(recipe.getId()).thenReturn(RECIPE_ID);
+        final Recipe recipe = mockRecipeWithId();
 
         final Mono<Recipe> actual = recipeService.createRecipe(recipe);
 
@@ -96,6 +95,35 @@ public class RecipeServiceTest {
                 .verify();
     }
 
+    @Test
+    void updateRecipeUpdatesRecipe() {
+        final Recipe recipeBeforeUpdate = mockRecipeWithId();
+        final Recipe recipeAfterUpdate = mock(Recipe.class);
+        when(recipeRepository.existsById(RECIPE_ID))
+                .thenReturn(Mono.just(true));
+
+        when(recipeRepository.update(recipeBeforeUpdate))
+                .thenReturn(Mono.just(recipeAfterUpdate));
+
+        final Mono<Recipe> actual = recipeService.updateRecipe(recipeBeforeUpdate);
+
+        StepVerifier.create(actual)
+                .expectNext(recipeAfterUpdate)
+                .verifyComplete();
+    }
+
+    @Test
+    void updateRecipeThrowsWhenRecipeNotFound() {
+        final Recipe recipeBeforeUpdate = mockRecipeWithId();
+        when(recipeRepository.existsById(RECIPE_ID))
+                .thenReturn(Mono.just(false));
+
+        final Mono<Recipe> actual = recipeService.updateRecipe(recipeBeforeUpdate);
+
+        StepVerifier.create(actual)
+                .expectErrorSatisfies(this::assertRecipeDoesNotExistError);
+    }
+
     private void assertRecipeDoesNotExistError(Throwable error) {
         assertInstanceOf(RecipeDoesNotExistException.class, error);
         assertEquals(RECIPE_ID, ((RecipeDoesNotExistException) error).getRecipeId());
@@ -104,5 +132,11 @@ public class RecipeServiceTest {
     @MockBean(RecipeRepository.class)
     RecipeRepository mockRepository() {
         return mock(RecipeRepository.class);
+    }
+
+    private static Recipe mockRecipeWithId() {
+        final Recipe recipe = mock(Recipe.class);
+        when(recipe.getId()).thenReturn(RECIPE_ID);
+        return recipe;
     }
 }
