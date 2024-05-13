@@ -13,7 +13,7 @@ import java.util.List;
 interface RecipeClient {
 
     @Get
-    List<GetRecipeDTO> list(
+    HttpResponse<List<GetRecipeDTO>> list(
             @QueryValue @Nullable Boolean vegetarian,
             @QueryValue @Nullable Integer servings,
             @QueryValue @Nullable String search,
@@ -22,10 +22,10 @@ interface RecipeClient {
     );
 
     @Get("/{id}")
-    GetRecipeDTO get(@PathVariable String id);
+    HttpResponse<GetRecipeDTO> get(@PathVariable String id);
 
     @Put("/{id}")
-    GetRecipeDTO update(@PathVariable String id, @Body RecipeDTO recipe);
+    HttpResponse<GetRecipeDTO> update(@PathVariable String id, @Body RecipeDTO recipe);
 
     @Post
     HttpResponse<GetRecipeDTO> create(@Body RecipeDTO recipe);
