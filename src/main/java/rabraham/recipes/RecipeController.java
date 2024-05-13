@@ -18,30 +18,30 @@ import java.util.stream.Collectors;
 public class RecipeController implements RecipeApi {
 
     @Inject
-    private RecipeRepository recipeRepository;
+    private RecipeService recipeService;
 
     @Override
     public Mono<HttpResponse<@Valid GetRecipeDTO>> create(RecipeDTO recipeDTO) {
-        return recipeRepository.save(toRecipe(recipeDTO))
+        return recipeService.createRecipe(toRecipe(recipeDTO))
                 .map(this::toGetDto)
                 .map(HttpResponse::created);
     }
 
     @Override
     public Mono<HttpResponse<Void>> delete(String recipeId) {
-        return recipeRepository.deleteById(recipeId)
+        return recipeService.deleteRecipe(recipeId)
                 .map(_ignore -> HttpResponse.noContent());
     }
 
     @Override
     public Mono<@Valid GetRecipeDTO> get(String recipeId) {
-        return recipeRepository.findById(recipeId)
+        return recipeService.getRecipe(recipeId)
                 .map(this::toGetDto);
     }
 
     @Override
     public Mono<@NotNull List<@Valid GetRecipeDTO>> list(Boolean vegetarian, Integer servings, String search, List<@NotNull String> includeIngredient, List<@NotNull String> excludeIngredient) {
-        return recipeRepository.findAll() // TODO query params
+        return recipeService.listRecipes() // TODO query params
                 .map(this::toGetDto)
                 .collect(Collectors.toList());
     }
@@ -50,7 +50,7 @@ public class RecipeController implements RecipeApi {
     public Mono<@Valid GetRecipeDTO> update(String recipeId, RecipeDTO recipeDTO) {
         final Recipe recipe = toRecipe(recipeDTO);
         recipe.setId(recipeId);
-        return recipeRepository.update(recipe)
+        return recipeService.updateRecipe(recipe)
                 .map(this::toGetDto);
     }
 
