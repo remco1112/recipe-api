@@ -1,0 +1,170 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Recipe API
+tags:
+  - name: recipe
+    description: Recipe API
+security:
+  - bearerAuth: []
+paths:
+  /recipes:
+    get:
+      tags:
+        - recipe
+      operationId: list
+      parameters:
+        - name: vegetarian
+          in: query
+          schema:
+            type: boolean
+        - name: servings
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: includeIngredient
+          in: query
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: excludeIngredient
+          in: query
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            "application/json":
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GetRecipeDTO"
+    post:
+      tags:
+        - recipe
+      operationId: create
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/RecipeDTO"
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json":
+              schema:
+                $ref: "#/components/schemas/GetRecipeDTO"
+  /recipes/{recipeId}:
+    get:
+      tags:
+        - recipe
+      operationId: get
+      parameters:
+        - name: recipeId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/GetRecipeDTO"
+    put:
+      tags:
+        - recipe
+      operationId: update
+      parameters:
+        - name: recipeId
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/RecipeDTO"
+      responses:
+        "200":
+          description: Success
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/GetRecipeDTO"
+    delete:
+      tags:
+        - recipe
+      operationId: delete
+      parameters:
+        - name: recipeId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Success
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    GetRecipeDTO:
+      type: object
+      properties:
+        id:
+          type: string
+        recipe:
+          $ref: "#/components/schemas/RecipeDTO"
+      required:
+        - id
+        - recipe
+
+    RecipeDTO:
+      type: object
+      properties:
+        title:
+          type: string
+        instructions:
+          type: string
+        servings:
+          type: integer
+          minimum: 1
+        vegetarian:
+          type: boolean
+        ingredients:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/IngredientDTO"
+      required:
+        - id
+        - title
+        - instructions
+        - servings
+        - vegetarian
+        - ingredients
+    IngredientDTO:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: string
+      required:
+        - name
