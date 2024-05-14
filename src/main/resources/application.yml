@@ -1,3 +1,8 @@
 micronaut:
   application:
     name: recipe-api
+  router:
+    static-resources:
+      spec:
+        mapping: /static/*
+        paths: classpath:/static

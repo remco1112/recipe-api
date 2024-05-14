@@ -5,8 +5,8 @@ info:
 tags:
   - name: recipe
     description: Recipe API
-security:
-  - bearerAuth: []
+servers:
+  - url: /web
 paths:
   /recipes:
     get:
@@ -44,7 +44,7 @@ paths:
         "200":
           description: Success
           content:
-            "application/json":
+            application/json:
               schema:
                 type: array
                 items:
@@ -56,14 +56,14 @@ paths:
       requestBody:
         required: true
         content:
-          "application/json":
+          application/json:
             schema:
               $ref: "#/components/schemas/RecipeDTO"
       responses:
         "201":
           description: Success
           content:
-            application/json":
+            application/json:
               schema:
                 $ref: "#/components/schemas/GetRecipeDTO"
   /recipes/{recipeId}:
@@ -82,7 +82,7 @@ paths:
         "200":
           description: Success
           content:
-            "application/json":
+            application/json:
               schema:
                 $ref: "#/components/schemas/GetRecipeDTO"
     put:
@@ -99,14 +99,14 @@ paths:
       requestBody:
         required: true
         content:
-          "application/json":
+          application/json:
             schema:
               $ref: "#/components/schemas/RecipeDTO"
       responses:
         "200":
           description: Success
           content:
-            "application/json":
+            application/json:
               schema:
                 $ref: "#/components/schemas/GetRecipeDTO"
     delete:

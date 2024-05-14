@@ -23,7 +23,7 @@
     <micronaut.test.resources.enabled>true</micronaut.test.resources.enabled>
     <exec.mainClass>rabraham.Application</exec.mainClass>
     <micronaut.openapi.generate.server>true</micronaut.openapi.generate.server>
-    <micronaut.openapi.definition>recipe-api.yaml</micronaut.openapi.definition>
+    <micronaut.openapi.definition>src/main/resources/static/recipe-api.yaml</micronaut.openapi.definition>
     <micronaut.openapi.api.package.name>rabraham.recipes.api</micronaut.openapi.api.package.name>
     <micronaut.openapi.model.package.name>rabraham.recipes.model</micronaut.openapi.model.package.name>
     <micronaut.openapi.invoker.package.name>rabraham.recipes</micronaut.openapi.invoker.package.name>
