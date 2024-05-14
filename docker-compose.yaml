@@ -1,0 +1,15 @@
+services:
+  web:
+    image: recipe-api
+    ports:
+      - 8080:8080
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/recipes
+    depends_on:
+      - mongo
+  mongo:
+    image: mongo
+    volumes:
+      - db:/data/db
+volumes:
+  db:
