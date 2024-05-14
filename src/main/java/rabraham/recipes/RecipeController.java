@@ -1,7 +1,9 @@
 package rabraham.recipes;
 
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Error;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -52,6 +54,11 @@ public class RecipeController implements RecipeApi {
         recipe.setId(recipeId);
         return recipeService.updateRecipe(recipe)
                 .map(this::toGetDto);
+    }
+
+    @Error(exception = RecipeDoesNotExistException.class)
+    public HttpResponse<?> onRecipeDoesNotExist(HttpRequest<?> request, RecipeDoesNotExistException ex) {
+        return HttpResponse.notFound();
     }
 
     private Recipe toRecipe(RecipeDTO recipeDTO) {
