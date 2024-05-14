@@ -16,7 +16,6 @@ public class Recipe {
     private String id;
 
     private boolean vegetarian;
-
     private String title;
     private String instructions;
     private int servings;
