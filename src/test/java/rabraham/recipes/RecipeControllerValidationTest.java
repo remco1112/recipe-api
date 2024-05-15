@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @MicronautTest
-public class RecipeApiValidationTest {
+public class RecipeControllerValidationTest {
 
     private static final String VALID_BODY =
             """             

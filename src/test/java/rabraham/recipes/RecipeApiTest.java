@@ -1,7 +1,6 @@
 package rabraham.recipes;
 
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
@@ -11,9 +10,10 @@ import rabraham.recipes.model.IngredientDTO;
 import rabraham.recipes.model.RecipeDTO;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static rabraham.recipes.HttpAssertions.*;
 
 @MicronautTest(transactional = false)
 public class RecipeApiTest {
@@ -65,7 +65,7 @@ public class RecipeApiTest {
 
         final HttpResponse<Void> response = recipeClient.delete(createdRecipe.getId());
 
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatus());
+        assertNoContentResponse(response);
 
         final List<GetRecipeDTO> recipes = listAllRecipes();
         assertTrue(recipes.isEmpty());
@@ -84,17 +84,20 @@ public class RecipeApiTest {
 
         final HttpResponse<GetRecipeDTO> response = recipeClient.get(createdRecipe.getId());
 
-        final GetRecipeDTO responseBody = assertOkWithBody(response);
-        assertEquals(createdRecipe, responseBody);
+        assertOkWithBody(createdRecipe, response);
     }
 
     @Test
     void createRecipesReturnsRecipe() {
         final HttpResponse<GetRecipeDTO> response = recipeClient.create(RECIPE);
 
-        final GetRecipeDTO responseBody = assertCreatedWithBody(response);
-        assertNotNull(responseBody.getId());
-        assertEquals(RECIPE, responseBody.getRecipe());
+        assertCreatedWithBody(
+                (Consumer<GetRecipeDTO>) (actualBody) -> {
+                    assertNotNull(actualBody.getId());
+                    assertEquals(RECIPE, actualBody.getRecipe());
+                },
+                response
+        );
     }
 
     @Test
@@ -112,17 +115,17 @@ public class RecipeApiTest {
 
         final HttpResponse<GetRecipeDTO> response = recipeClient.update(recipe.getId(), updatedRecipe);
 
-        final GetRecipeDTO responseBody = assertOkWithBody(response);
-        assertEquals(recipe.getId(), responseBody.getId());
-        assertEquals(recipe.getRecipe(), updatedRecipe);
+        assertOkWithBody(
+                (Consumer<GetRecipeDTO>) (actualBody) -> {
+                    assertEquals(recipe.getId(), actualBody.getId());
+                    assertEquals(recipe.getRecipe(), updatedRecipe);
+                },
+                response
+        );
 
         final List<GetRecipeDTO> recipes = listAllRecipes();
         assertEquals(1, recipes.size());
-        assertEquals(responseBody, recipes.get(0));
-    }
-
-    private static void assertNotFoundResponse(HttpResponse<?> response) {
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatus());
+        assertEquals(response.body(), recipes.get(0));
     }
 
     @AfterEach
@@ -140,22 +143,5 @@ public class RecipeApiTest {
         return recipeClient.create(RecipeApiTest.RECIPE)
                 .getBody()
                 .orElseThrow();
-    }
-
-    private GetRecipeDTO assertCreatedWithBody(HttpResponse<GetRecipeDTO> response) {
-        return assertStatusWithBody(response, HttpStatus.CREATED);
-    }
-
-    private GetRecipeDTO assertOkWithBody(HttpResponse<GetRecipeDTO> response) {
-        return assertStatusWithBody(response, HttpStatus.OK);
-    }
-
-    private GetRecipeDTO assertStatusWithBody(HttpResponse<GetRecipeDTO> response, HttpStatus status) {
-        final Optional<GetRecipeDTO> body = response.getBody();
-
-        assertEquals(status, response.status());
-        assertTrue(body.isPresent());
-
-        return body.get();
     }
 }

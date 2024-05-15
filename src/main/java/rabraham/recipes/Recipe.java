@@ -7,6 +7,7 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.FetchType;
 
 import java.util.List;
+import java.util.Objects;
 
 @MappedEntity
 public class Recipe {
@@ -69,5 +70,23 @@ public class Recipe {
 
     public void setIngredients(List<Ingredient> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Recipe recipe = (Recipe) o;
+        return vegetarian == recipe.vegetarian
+                && servings == recipe.servings
+                && Objects.equals(id, recipe.id)
+                && Objects.equals(title, recipe.title)
+                && Objects.equals(instructions, recipe.instructions)
+                && Objects.equals(ingredients, recipe.ingredients);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, vegetarian, title, instructions, servings, ingredients);
     }
 }
