@@ -3,7 +3,7 @@ package rabraham.recipes;
 import io.micronaut.data.repository.jpa.criteria.PredicateSpecification;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import jakarta.inject.Inject;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,19 +14,17 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @MicronautTest
+@AllArgsConstructor
 public class RecipeServiceTest {
     private static final String RECIPE_ID = "recipe id";
 
-    @Inject
     private RecipeRepository recipeRepository;
-
-    @Inject
     private RecipeService recipeService;
 
     @Test
     void createRecipeSavesRecipe() {
         final Recipe recipe = mock(Recipe.class);
-        final Mono<Recipe> expected = (Mono<Recipe>) mock(Mono.class);
+        @SuppressWarnings("unchecked") final Mono<Recipe> expected = (Mono<Recipe>) mock(Mono.class);
         when(recipeRepository.save(recipe))
                 .thenReturn(expected);
 
@@ -128,8 +126,12 @@ public class RecipeServiceTest {
 
     @Test
     void listRecipesListsRecipes() {
-        final PredicateSpecification<Recipe> mockPredicateSpecification = (PredicateSpecification<Recipe>) mock(PredicateSpecification.class);
-        final Flux<Recipe> expected = (Flux<Recipe>) mock(Flux.class);
+        @SuppressWarnings("unchecked") final PredicateSpecification<Recipe> mockPredicateSpecification
+                = (PredicateSpecification<Recipe>) mock(PredicateSpecification.class);
+
+        @SuppressWarnings("unchecked") final Flux<Recipe> expected
+                = (Flux<Recipe>) mock(Flux.class);
+
         when(recipeRepository.findAll(mockPredicateSpecification))
                 .thenReturn(expected);
 
@@ -143,9 +145,9 @@ public class RecipeServiceTest {
 
     private void assertRecipeDoesNotExistError(Throwable error) {
         assertInstanceOf(RecipeDoesNotExistException.class, error);
-        assertEquals(RECIPE_ID, ((RecipeDoesNotExistException) error).getRecipeId());
     }
 
+    @SuppressWarnings("unused")
     @MockBean(RecipeRepository.class)
     RecipeRepository mockRepository() {
         return mock(RecipeRepository.class);

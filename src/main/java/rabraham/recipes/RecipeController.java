@@ -1,12 +1,11 @@
 package rabraham.recipes;
 
-import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Error;
-import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import rabraham.recipes.api.RecipeApi;
 import rabraham.recipes.model.GetRecipeDTO;
 import rabraham.recipes.model.IngredientDTO;
@@ -16,10 +15,10 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 @Controller
 public class RecipeController implements RecipeApi {
 
-    @Inject
     private RecipeService recipeService;
 
     @Override
@@ -56,8 +55,9 @@ public class RecipeController implements RecipeApi {
                 .map(this::toGetDto);
     }
 
+    @SuppressWarnings("unused")
     @Error(exception = RecipeDoesNotExistException.class)
-    public HttpResponse<?> onRecipeDoesNotExist(HttpRequest<?> request, RecipeDoesNotExistException ex) {
+    public HttpResponse<?> onRecipeDoesNotExist() {
         return HttpResponse.notFound();
     }
 

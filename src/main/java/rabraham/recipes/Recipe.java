@@ -5,13 +5,13 @@ import io.micronaut.data.annotation.Id;
 import io.micronaut.data.annotation.MappedEntity;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.FetchType;
+import lombok.Data;
 
 import java.util.List;
-import java.util.Objects;
 
+@Data
 @MappedEntity
 public class Recipe {
-
     @Id
     @GeneratedValue(GeneratedValue.Type.UUID)
     private String id;
@@ -23,70 +23,4 @@ public class Recipe {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<Ingredient> ingredients;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public boolean isVegetarian() {
-        return vegetarian;
-    }
-
-    public void setVegetarian(boolean vegetarian) {
-        this.vegetarian = vegetarian;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getInstructions() {
-        return instructions;
-    }
-
-    public void setInstructions(String instructions) {
-        this.instructions = instructions;
-    }
-
-    public int getServings() {
-        return servings;
-    }
-
-    public void setServings(int servings) {
-        this.servings = servings;
-    }
-
-    public List<Ingredient> getIngredients() {
-        return ingredients;
-    }
-
-    public void setIngredients(List<Ingredient> ingredients) {
-        this.ingredients = ingredients;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Recipe recipe = (Recipe) o;
-        return vegetarian == recipe.vegetarian
-                && servings == recipe.servings
-                && Objects.equals(id, recipe.id)
-                && Objects.equals(title, recipe.title)
-                && Objects.equals(instructions, recipe.instructions)
-                && Objects.equals(ingredients, recipe.ingredients);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, vegetarian, title, instructions, servings, ingredients);
-    }
 }

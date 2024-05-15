@@ -1,15 +1,15 @@
 package rabraham.recipes;
 
 import io.micronaut.transaction.annotation.Transactional;
-import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import lombok.AllArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@AllArgsConstructor
 @Singleton
 public class RecipeServiceImpl implements RecipeService {
 
-    @Inject
     private RecipeRepository recipeRepository;
 
     @Override

@@ -2,7 +2,7 @@ package rabraham.recipes;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
-import jakarta.inject.Inject;
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import rabraham.recipes.model.GetRecipeDTO;
@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 import static org.junit.jupiter.api.Assertions.*;
 import static rabraham.recipes.HttpAssertions.*;
 
+@AllArgsConstructor
 @MicronautTest(transactional = false)
 public class RecipeApiTest {
     private static final String NOT_FOUND_RECIPE_ID = "000000000000000000000000";
@@ -29,10 +30,7 @@ public class RecipeApiTest {
                     new IngredientDTO("butter"))
     );
 
-    @Inject
     RecipeClient recipeClient;
-
-    @Inject
     RecipeRepository recipeRepository;
 
     @Test

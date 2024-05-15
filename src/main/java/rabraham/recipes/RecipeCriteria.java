@@ -5,7 +5,7 @@ import io.micronaut.data.repository.jpa.criteria.PredicateSpecification;
 
 import java.util.List;
 
-record RecipeCriteria(
+public record RecipeCriteria(
         @Nullable Boolean vegetarian,
         @Nullable Integer servings,
         @Nullable String search,
@@ -43,7 +43,9 @@ record RecipeCriteria(
     }
 
     PredicateSpecification<Recipe> matches() {
-        PredicateSpecification<Recipe> predicate = (PredicateSpecification<Recipe>) PredicateSpecification.ALL;
+        @SuppressWarnings("unchecked") PredicateSpecification<Recipe> predicate
+                = (PredicateSpecification<Recipe>) PredicateSpecification.ALL;
+
         if (vegetarian != null) {
             predicate = predicate.and(matchesVegetarian());
         }
