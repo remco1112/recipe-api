@@ -2,9 +2,11 @@ package rabraham.recipes;
 
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.data.repository.jpa.criteria.PredicateSpecification;
+import lombok.Builder;
 
 import java.util.List;
 
+@Builder
 public record RecipeCriteria(
         @Nullable Boolean vegetarian,
         @Nullable Integer servings,
@@ -21,7 +23,10 @@ public record RecipeCriteria(
     }
 
     private PredicateSpecification<Recipe> containsSearchQueryInInstructions() {
-        return (root, cb) -> cb.like(root.get("instructions"), search);
+        return (root, cb) -> cb.or(
+                cb.like(root.get("title"), search),
+                cb.like(root.get("instructions"), search)
+        );
     }
 
     private PredicateSpecification<Recipe> includesIngredients() {

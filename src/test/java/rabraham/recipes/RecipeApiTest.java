@@ -5,10 +5,13 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import rabraham.recipes.model.GetRecipeDTO;
 import rabraham.recipes.model.IngredientDTO;
 import rabraham.recipes.model.RecipeDTO;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -40,14 +43,65 @@ public class RecipeApiTest {
         assertTrue(recipes.isEmpty());
     }
 
-    @Test
-    void listRecipesReturnsCreatedRecipe() {
+    @ParameterizedTest
+    @MethodSource
+    void listRecipesReturnsCreatedRecipeForCriteria(RecipeCriteria criteria) {
         final GetRecipeDTO createdRecipe = createRecipe();
 
-        final List<GetRecipeDTO> recipes = listAllRecipes();
+        final HttpResponse<List<GetRecipeDTO>> response = recipeClient.list(
+                criteria.vegetarian(),
+                criteria.servings(),
+                criteria.search(),
+                criteria.includeIngredients(),
+                criteria.excludeIngredients()
+        );
 
-        assertEquals(1, recipes.size());
-        assertEquals(createdRecipe, recipes.get(0));
+        assertOkWithBody(List.of(createdRecipe), response);
+    }
+
+    static List<RecipeCriteria> listRecipesReturnsCreatedRecipeForCriteria() {
+        return List.of(
+                new RecipeCriteria.RecipeCriteriaBuilder().build(),
+                new RecipeCriteria.RecipeCriteriaBuilder().vegetarian(false).build(),
+                new RecipeCriteria.RecipeCriteriaBuilder().servings(2).build(),
+                new RecipeCriteria.RecipeCriteriaBuilder().search("cake").build(),
+                new RecipeCriteria.RecipeCriteriaBuilder().search("mix").build(),
+                new RecipeCriteria.RecipeCriteriaBuilder().vegetarian(false).servings(2).search("cake").build()
+                /*  FIXME Disabled test: see rabraham.recipes.RecipeCriteria#includesIngredients
+                new RecipeCriteria.RecipeCriteriaBuilder().includeIngredients(List.of("milk")).build(),
+                    FIXME Disabled test: see rabraham.recipes.RecipeCriteria#excludeIngredients
+                new RecipeCriteria.RecipeCriteriaBuilder().excludeIngredients(List.of("carrot")).build()
+                 */
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    void listRecipesDoesNotReturnCreatedRecipeForCriteria(RecipeCriteria criteria) {
+        createRecipe();
+
+        final HttpResponse<List<GetRecipeDTO>> response = recipeClient.list(
+                criteria.vegetarian(),
+                criteria.servings(),
+                criteria.search(),
+                criteria.includeIngredients(),
+                criteria.excludeIngredients()
+        );
+
+        assertOkWithBody(Collections.emptyList(), response);
+    }
+
+    static List<RecipeCriteria> listRecipesDoesNotReturnCreatedRecipeForCriteria() {
+        return List.of(
+                new RecipeCriteria.RecipeCriteriaBuilder().vegetarian(true).build(),
+                new RecipeCriteria.RecipeCriteriaBuilder().servings(3).build(),
+                new RecipeCriteria.RecipeCriteriaBuilder().search("soup").build()
+                /*  FIXME Disabled test: see rabraham.recipes.RecipeCriteria#includesIngredients
+                new RecipeCriteria.RecipeCriteriaBuilder().includeIngredients(List.of("carrot")).build(),
+                    FIXME Disabled test: see rabraham.recipes.RecipeCriteria#excludeIngredients
+                new RecipeCriteria.RecipeCriteriaBuilder().excludeIngredients(List.of("milk")).build()
+                 */
+        );
     }
 
     @Test
