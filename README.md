@@ -21,6 +21,8 @@ architecture.
 - No authentication or authorisation is implemented. It is advisable to authenticate users and only allow users to
   change recipes they created themselves. Authentication could be implemented through an external authentication
   provider with JWT.
+- No pagination is implemented. As the number of recipes in the database grows this will become a scalability issue in
+  terms of the response size of the list operation. It is advisable to add pagination to this operation.
 
 ## Testing
 
