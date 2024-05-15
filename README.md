@@ -11,11 +11,13 @@ architecture.
 - Uses a design-first approach where server classes are generated from the OpenAPI specification
 - Uses a document database (MongDB) since it is best suited for this type of data. Recipes are essentially documents,
   there are no relations, and the exact fields will likely change over time.
+- Uses a simple datamodel with main entity Recipe and embedded entity Ingredient. Ingredient has two fields, name and
+  quantity in order to query for ingredient names only.
 
 ## Known limitations
 
 - Due to issues with the criteria builder used for the list query it is not possible to filter by included and excluded
-  ingredients. See disabled test `X` the scenario.
+  ingredients. See disabled tests in `rabraham.recipes.RecipeApiTest` for the scenario.
 - No authentication or authorisation is implemented. It is advisable to authenticate users and only allow users to
   change recipes they created themselves. Authentication could be implemented through an external authentication
   provider with JWT.
